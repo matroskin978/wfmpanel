@@ -27,4 +27,15 @@ class Wfmpanel_Admin {
 		require_once WFMPANEL_PLUGIN_DIR . 'admin/templates/slides-page-template.php';
 	}
 
+	public static function get_posts() {
+
+		return new WP_Query( array(
+			'post_type' => 'post',
+			'posts_per_page' => 10,
+			'orderby' => 'ID',
+			'order' => 'DESC',
+			'paged' => $_GET['paged'] ?? 1,
+		) );
+	}
+
 }
