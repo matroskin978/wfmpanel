@@ -12,6 +12,19 @@ class Wfmpanel_Admin {
 		echo "<pre>" . print_r( $data, 1 ) . "</pre>";
 	}
 
+	public static function get_slides( $all = false ) {
+		global $wpdb;
+		if ( $all ) {
+			return $wpdb->get_results( "SELECT * FROM wfm_panel ORDER BY title ASC", ARRAY_A );
+		}
+		$slides = $wpdb->get_results( "SELECT id, title FROM wfm_panel ORDER BY title ASC", ARRAY_A );
+		$data = array();
+		foreach ( $slides as $slide ) {
+			$data[$slide['id']] = $slide['title'];
+		}
+		return $data;
+	}
+
 	public function save_slide() {
 		if ( ! isset( $_POST['wfmpanel_add_slide'] ) || ! wp_verify_nonce( $_POST['wfmpanel_add_slide'], 'wfmpanel_action' ) ) {
 			wp_die( __( 'Error!', 'wfmpanel' ) );
@@ -19,16 +32,25 @@ class Wfmpanel_Admin {
 
 		$slide_title   = isset( $_POST['slide_title'] ) ? trim( $_POST['slide_title'] ) : '';
 		$slide_content = isset( $_POST['slide_content'] ) ? trim( $_POST['slide_content'] ) : '';
+		$slide_id = isset( $_POST['slide_id'] ) ? (int) $_POST['slide_id'] : 0;
+
 		if ( empty( $slide_title ) || empty( $slide_content ) ) {
 			set_transient( 'wfmpanel_form_errors', __( 'Form fields are required', 'wfmpanel' ), 30 );
 		} else {
 			$slide_title   = wp_unslash( $slide_title );
 			$slide_content = wp_unslash( $slide_content );
 			global $wpdb;
-			if ( $wpdb->query( $wpdb->prepare(
-				"INSERT INTO wfm_panel (title, content) VALUES (%s, %s)", $slide_title, $slide_content
+
+			if ( $slide_id ) {
+				$query = "UPDATE wfm_panel SET title = %s, content = %s WHERE id = $slide_id";
+			} else {
+				$query = "INSERT INTO wfm_panel (title, content) VALUES (%s, %s)";
+			}
+
+			if ( false !== $wpdb->query( $wpdb->prepare(
+				$query, $slide_title, $slide_content
 			) ) ) {
-				set_transient( 'wfmpanel_form_success', __( 'Slide added', 'wfmpanel' ), 30 );
+				set_transient( 'wfmpanel_form_success', __( 'Slide saved', 'wfmpanel' ), 30 );
 			} else {
 				set_transient( 'wfmpanel_form_errors', __( 'Error saving slide', 'wfmpanel' ), 30 );
 			}
@@ -37,8 +59,10 @@ class Wfmpanel_Admin {
 	}
 
 	public function enqueue_scripts_styles() {
+		wp_enqueue_style( 'wfmpanel-jquery-ui', WFMPANEL_PLUGIN_URL . 'admin/assets/jquery-ui-accordion/jquery-ui.css' );
 		wp_enqueue_style( 'wfmpanel', WFMPANEL_PLUGIN_URL . 'admin/css/wfmpanel-admin.css' );
-		wp_enqueue_script( 'wfmpanel', WFMPANEL_PLUGIN_URL . 'admin/js/wfmpanel-admin.js', array( 'jquery' ) );
+		wp_register_script( 'wfmpanel-jquery-ui', WFMPANEL_PLUGIN_URL . 'admin/assets/jquery-ui-accordion/jquery-ui.js' );
+		wp_enqueue_script( 'wfmpanel', WFMPANEL_PLUGIN_URL . 'admin/js/wfmpanel-admin.js', array( 'jquery', 'wfmpanel-jquery-ui' ) );
 	}
 
 	public function admin_menu() {
