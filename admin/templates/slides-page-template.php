@@ -39,8 +39,12 @@
                     <label for="slide_content"><?php _e( 'Slide content', 'wfmpanel' ) ?></label>
                 </th>
                 <td>
-                    <textarea name="slide_content" id="slide_content" cols="50" rows="10"
-                              class="large-text code"></textarea>
+					<?php wp_editor( '', 'wp_editor_main', array(
+						'textarea_name' => 'slide_content',
+						'textarea_rows' => 10,
+					) ); ?>
+                    <!--<textarea name="slide_content" id="slide_content" cols="50" rows="10"
+                              class="large-text code"></textarea>-->
                 </td>
             </tr>
 
@@ -83,11 +87,15 @@
                                 <label for="slide_content_<?php echo $wfm_slide['id'] ?>"><?php _e( 'Slide content', 'wfmpanel' ) ?></label>
                             </th>
                             <td>
-                                <textarea name="slide_content" id="slide_content_<?php echo $wfm_slide['id'] ?>"
+	                            <?php wp_editor( $wfm_slide['content'], "slide_content_{$wfm_slide['id']}", array(
+		                            'textarea_name' => 'slide_content',
+		                            'textarea_rows' => 10,
+	                            ) ); ?>
+                                <!--<textarea name="slide_content" id="slide_content_<?php /*echo $wfm_slide['id'] */?>"
                                           cols="50" rows="10"
                                           class="large-text code">
-                                    <?php echo esc_attr( $wfm_slide['content'] ) ?>
-                                </textarea>
+                                    <?php /*echo esc_attr( $wfm_slide['content'] ) */?>
+                                </textarea>-->
                             </td>
                         </tr>
                         </tbody>
