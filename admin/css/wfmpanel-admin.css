@@ -1,6 +1,7 @@
 .pagination{
     margin: 20px 20px 20px 0;
 }
+
 .pagination span,
 .pagination a{
     border: 1px solid #ddd;
@@ -10,14 +11,35 @@
     text-decoration: none;
     margin: 0;
 }
+
 .pagination span.current{
     background: #428bca;
     color: #fff;
     border: 1px solid #ddd;
 }
+
 .pagination a:hover{
     background: #eee;
 }
+
 .pagination span.dots{
     border: none;
+}
+
+#wfmpanel-loader {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0,0,0,.5);
+    z-index: 9999;
+}
+
+#wfmpanel-loader img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%);
 }
